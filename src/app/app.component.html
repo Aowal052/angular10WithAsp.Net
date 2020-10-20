@@ -1,0 +1,76 @@
+<!-- <app-nav></app-nav>
+<router-outlet></router-outlet> -->
+<article class="container">
+    <h2>Editable Dynamic Table</h2>
+    <table class="table table-bordered" mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="{{col}}" *ngFor="let col of displayedColumns">
+        <th class="text-center" mat-header-cell *matHeaderCellDef>
+          <span *ngIf="col !== '$$edit'">
+            {{col}}
+          </span>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <div *ngIf="!element.isEdit">
+            <div class="btn-edit tr" *ngIf="col === '$$edit'; spanHeader" >
+              <button class="btn btn-primary td" (click)="element.isEdit = !element.isEdit">Edit</button>
+              <button class="btn btn-danger ml-2 td" (click)="element.isEdit = !element.isEdit">Delete</button>
+            </div>
+              
+            <span #spanHeader>
+              {{element[col]}}
+            </span>
+          </div>
+          <div *ngIf="element.isEdit">
+            <div class="btn-edit" *ngIf="col === '$$edit'; else dataField">
+              <button class="btn btn-success" (click)="element.isEdit = !element.isEdit">Done</button>
+              <button class="btn btn-danger ml-2" (click)="element.isEdit = !element.isEdit">Cancel</button>
+            </div>
+            <ng-template #dataField>
+              <mat-form-field>
+                <mat-label>{{col}}</mat-label>
+                <input type="{{dataSchema[col]}}" matInput value="{{element[col]}}">
+              </mat-form-field>
+            </ng-template>
+          </div>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </article>
+<div class="container">
+    
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      
+      <p>
+        <label for="name">Task Assigned By:</label>
+        <input type="text" id="name" name="name" formControlName="name" class="form-control">
+      </p>
+    
+      <table class="table table-bordered" formArrayName="Tasks">
+        <tr>
+          <th colspan="2">Add Multiple Task:</th>
+          <th width="150px"><button type="button" (click)="addQuantity()" class="btn btn-primary">Add More</button></th>
+        </tr>
+        <tr *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">
+          <td>
+              Task :
+              <input type="text" formControlName="tskQty" class="form-control">
+          </td>
+          <td>
+              Site:
+              <input type="text" formControlName="site" class="form-control">
+          </td>
+          <td>
+              <button (click)="removeQuantity(i)" class="btn btn-danger">Remove</button>
+          </td>
+        </tr>
+      </table>
+     
+      <button type="submit" class="btn btn-success">Submit</button>
+      
+    </form>
+      
+    <br/>
+    {{this.productForm.value | json}}
+  </div>
